@@ -1,0 +1,430 @@
+:root {
+  --picked: #42b883;
+  --border: var(--vscode-widget-border, rgba(128, 128, 128, 0.35));
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  font-family: var(--vscode-font-family);
+  font-size: var(--vscode-font-size);
+  color: var(--vscode-foreground);
+  user-select: none;
+  overflow: hidden;
+}
+
+.picker {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 8px;
+  min-height: 0;
+}
+
+.workspace {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  gap: 12px;
+}
+
+.workbench {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  gap: 8px;
+}
+
+/* ------------------------------------------------------- lighten / darken */
+
+/*
+ * Lighten sits above darken around a vertical slider, so the control reads the
+ * way the colors move. The slider is anchored to whatever was last picked
+ * rather than accumulating, so dragging back to zero returns exactly the
+ * original color instead of drifting.
+ */
+.adjust {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 0 0 auto;
+  padding-top: 4px;
+}
+
+.adjust-button {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--vscode-button-secondaryForeground, var(--vscode-foreground));
+  background: var(--vscode-button-secondaryBackground, rgba(128, 128, 128, 0.2));
+}
+
+.adjust-button:hover {
+  background: var(--vscode-button-secondaryHoverBackground, rgba(128, 128, 128, 0.35));
+}
+
+.adjust-button:focus-visible {
+  outline: 1px solid var(--vscode-focusBorder);
+  outline-offset: 1px;
+}
+
+.steps {
+  flex: 1 1 auto;
+  min-height: 60px;
+  width: 14px;
+  appearance: none;
+  -webkit-appearance: none;
+  /* Chromium 121 and later stand a range input on end this way. */
+  writing-mode: vertical-lr;
+  direction: rtl;
+  border-radius: 7px;
+  background: var(--steps-track, var(--vscode-input-background));
+  box-shadow: inset 0 0 0 1px var(--border);
+  cursor: pointer;
+}
+
+.steps::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: transparent;
+  border: 2px solid #fff;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.85),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.85);
+}
+
+.steps:focus-visible {
+  outline: 1px solid var(--vscode-focusBorder);
+  outline-offset: 2px;
+}
+
+/*
+ * Older Chromium needs `slider-vertical` instead, which cannot be declared
+ * alongside the above: it also restores the native look and would undo the
+ * custom track. picker.js measures the rendered control and adds this class
+ * only where the modern property did not take effect.
+ */
+.steps.legacy-vertical {
+  -webkit-appearance: slider-vertical;
+  writing-mode: horizontal-tb;
+  direction: ltr;
+  background: none;
+  box-shadow: none;
+}
+
+.steps-value {
+  font-size: 0.75em;
+  opacity: 0.8;
+  font-variant-numeric: tabular-nums;
+}
+
+.adjust-keys {
+  font-size: 0.72em;
+  opacity: 0.55;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------------- tabs */
+
+.tabs {
+  display: flex;
+  gap: 2px;
+  flex: 0 0 auto;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab {
+  padding: 5px 12px;
+  border: none;
+  border-bottom: 1px solid transparent;
+  margin-bottom: -1px;
+  background: none;
+  color: var(--vscode-foreground);
+  opacity: 0.65;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+}
+
+.tab:hover {
+  opacity: 1;
+}
+
+.tab[aria-selected='true'] {
+  opacity: 1;
+  border-bottom-color: var(--picked);
+}
+
+.tab:focus-visible {
+  outline: 1px solid var(--vscode-focusBorder);
+  outline-offset: -1px;
+}
+
+/* ------------------------------------------------------------------ panes */
+
+.panes {
+  flex: 1 1 auto;
+  min-height: 0;
+  position: relative;
+}
+
+.pane {
+  display: none;
+  height: 100%;
+  min-height: 0;
+}
+
+.pane[data-active='true'] {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.pane[data-pane='palette'] {
+  align-items: stretch;
+}
+
+/* --------------------------------------------------------------- palette */
+
+/*
+ * No gaps between the swatches. A gap looks tidy but is dead space: aiming at a
+ * color and landing a pixel out does nothing, which is maddening at this size.
+ * Tiled edge to edge, every pixel of the grid picks the color under it.
+ */
+.grid {
+  display: grid;
+  gap: 0;
+  width: 100%;
+  align-content: start;
+  overflow-y: auto;
+  border-radius: 3px;
+  overflow-x: hidden;
+}
+
+.chip {
+  border: none;
+  padding: 0;
+  border-radius: 0;
+  cursor: pointer;
+  min-height: 14px;
+  /* Squares this small read as one mass without a hairline between them. */
+  box-shadow: inset 0 0 0 1px rgba(128, 128, 128, 0.18);
+}
+
+/*
+ * Rings are drawn inside the chip rather than outside it. An outline with an
+ * offset, or any transform, makes the swatch appear to jump forward as the
+ * pointer crosses the grid, which is distracting when there are two hundred of
+ * them. These change only colour, never size or position.
+ */
+.chip:hover {
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.55),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.85);
+  /* Above its neighbours, so the ring is not clipped by the next swatch. */
+  position: relative;
+  z-index: 1;
+}
+
+/* The colour currently in use, marked with a light ring inside a dark one so it
+   reads against any swatch. */
+.chip[data-selected='true'] {
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.85),
+    inset 0 0 0 3px rgba(255, 255, 255, 0.95),
+    inset 0 0 0 4px rgba(0, 0, 0, 0.85);
+  position: relative;
+  z-index: 2;
+}
+
+.chip:focus-visible {
+  outline: none;
+  box-shadow:
+    inset 0 0 0 2px var(--vscode-focusBorder),
+    inset 0 0 0 4px rgba(0, 0, 0, 0.6);
+  position: relative;
+  z-index: 3;
+}
+
+/* ------------------------------------------------------------------- hsv */
+
+#wheel {
+  flex: 0 0 auto;
+  cursor: crosshair;
+  border-radius: 50%;
+  touch-action: none;
+}
+
+/* --------------------------------------------------------------- sliders */
+
+.sliders {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 420px;
+}
+
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.slider-label {
+  flex: 0 0 auto;
+  width: 3.2em;
+  font-size: 0.85em;
+  opacity: 0.75;
+}
+
+.slider-value {
+  flex: 0 0 auto;
+  width: 3.6em;
+  text-align: right;
+  font-family: var(--vscode-editor-font-family, monospace);
+  font-size: 0.85em;
+  opacity: 0.85;
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * Range inputs are painted by hand so each track can show the gradient of the
+ * channel it controls: what the color becomes as you move, not a grey bar.
+ */
+.track {
+  flex: 1 1 auto;
+  min-width: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  height: 14px;
+  border-radius: 7px;
+  background: var(--track, var(--vscode-input-background));
+  box-shadow: inset 0 0 0 1px var(--border);
+  cursor: pointer;
+}
+
+.track::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: transparent;
+  border: 2px solid #fff;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.85),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.85);
+  cursor: pointer;
+}
+
+.track:focus-visible {
+  outline: 1px solid var(--vscode-focusBorder);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------- readout */
+
+.readout {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
+.swatch {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
+  background: var(--picked);
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+.hex {
+  flex: 0 1 8.5em;
+  min-width: 0;
+  padding: 4px 8px;
+  font-family: var(--vscode-editor-font-family, monospace);
+  color: var(--vscode-input-foreground);
+  background: var(--vscode-input-background);
+  border: 1px solid var(--vscode-input-border, transparent);
+  border-radius: 3px;
+  user-select: text;
+}
+
+.hex:focus {
+  outline: 1px solid var(--vscode-focusBorder);
+  outline-offset: -1px;
+}
+
+.hex.invalid {
+  outline: 1px solid var(--vscode-inputValidation-errorBorder, #be1100);
+  outline-offset: -1px;
+}
+
+.copy {
+  flex: 0 0 auto;
+  padding: 4px 8px;
+  font-family: inherit;
+  font-size: 0.85em;
+  color: var(--vscode-button-secondaryForeground, var(--vscode-foreground));
+  background: var(--vscode-button-secondaryBackground, rgba(128, 128, 128, 0.2));
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.copy:hover {
+  background: var(--vscode-button-secondaryHoverBackground, rgba(128, 128, 128, 0.35));
+}
+
+.copy:focus-visible {
+  outline: 1px solid var(--vscode-focusBorder);
+  outline-offset: 1px;
+}
+
+.copy.icon {
+  font-size: 1.1em;
+  line-height: 1;
+  padding: 3px 8px;
+}
+
+.toast {
+  font-size: 0.85em;
+  opacity: 0;
+  transition: opacity 120ms ease-out;
+}
+
+.toast[data-shown='true'] {
+  opacity: 0.75;
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.85em;
+  opacity: 0.6;
+}
+
+.gamut {
+  color: var(--vscode-editorWarning-foreground, inherit);
+  opacity: 0.9;
+}

@@ -1,0 +1,4 @@
+The integration tests open this folder as their workspace, and Peacock writes
+its colors into .vscode/settings.json here. Both of those are ignored, which
+left the directory untracked entirely — so a fresh clone had no workspace to
+open and the suite could not run. This file exists to keep the directory.

@@ -1,0 +1,15 @@
+node_modules/
+out/
+*.vsix
+
+# Symlink to the VS Code download used by the integration tests
+.vscode-test
+.vscode-test/
+
+# Written by Peacock while the integration tests run
+test-fixtures/workspace/.vscode/settings.json
+
+# Icon exploration: scratch, not part of the extension
+icon-candidates/
+
+.DS_Store

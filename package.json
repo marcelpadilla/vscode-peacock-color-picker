@@ -1,0 +1,140 @@
+{
+  "name": "peacock-color-picker",
+  "displayName": "Peacock Color Picker",
+  "description": "Minimal color picker for the Peacock extension.",
+  "version": "1.1.2",
+  "publisher": "marcelpadilla",
+  "author": {
+    "name": "Marcel Padilla",
+    "url": "https://marcelpadilla.com"
+  },
+  "license": "MIT",
+  "icon": "media/icon.png",
+  "galleryBanner": {
+    "color": "#2b2f38",
+    "theme": "dark"
+  },
+  "pricing": "Free",
+  "engines": {
+    "vscode": "^1.84.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "peacock",
+    "color picker",
+    "oklch",
+    "color wheel",
+    "workspace color"
+  ],
+  "homepage": "https://github.com/marcelpadilla/vscode-peacock-color-picker#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marcelpadilla/vscode-peacock-color-picker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/marcelpadilla/vscode-peacock-color-picker/issues"
+  },
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true
+    },
+    "virtualWorkspaces": true
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "peacockColorPicker.open",
+        "title": "Pick a Color",
+        "category": "Peacock Color Picker"
+      },
+      {
+        "command": "peacockColorPicker.random",
+        "title": "Random Color",
+        "category": "Peacock Color Picker"
+      },
+      {
+        "command": "peacockColorPicker.openWheel",
+        "title": "Open Color Wheel",
+        "category": "Peacock Color Picker"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "peacockColorPicker.random",
+        "key": "ctrl+shift+alt+r",
+        "mac": "ctrl+alt+cmd+r"
+      },
+      {
+        "command": "peacockColorPicker.openWheel",
+        "key": "ctrl+shift+alt+p",
+        "mac": "ctrl+alt+cmd+p"
+      }
+    ],
+    "configuration": {
+      "title": "Peacock Color Picker",
+      "properties": {
+        "peacockColorPicker.showStatusBarButton": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the color picker button in the status bar."
+        },
+        "peacockColorPicker.statusBarPriority": {
+          "type": "number",
+          "default": -1,
+          "description": "Status bar ordering priority. Higher numbers sit further left. Peacock's own item uses 0, so the default of -1 places this button immediately to its right. You can also just drag the item in the status bar to reorder it."
+        }
+      }
+    },
+    "viewsContainers": {
+      "panel": [
+        {
+          "id": "peacockColorPickerContainer",
+          "title": "Peacock",
+          "icon": "media/wheel.svg"
+        }
+      ]
+    },
+    "views": {
+      "peacockColorPickerContainer": [
+        {
+          "id": "peacockColorPicker.wheel",
+          "name": "Color Picker",
+          "type": "webview",
+          "icon": "media/wheel.svg"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "npm run clean && tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package",
+    "test:unit": "node --test \"test/**/*.test.js\"",
+    "test:integration": "vscode-test",
+    "pretest": "npm run compile",
+    "test": "npm run test:unit && npm run test:webview && npm run test:integration",
+    "clean": "rm -rf out",
+    "icon": "node scripts/generate-icon.js",
+    "publish": "vsce publish",
+    "screenshot:picker": "node scripts/capture-picker.js",
+    "screenshot:window": "node scripts/capture-window.js",
+    "test:webview": "node scripts/check-picker.js"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.10.0",
+    "@types/vscode": "~1.84.0",
+    "@vscode/test-cli": "^0.0.15",
+    "@vscode/test-electron": "^3.1.0",
+    "@vscode/vsce": "^3.2.1",
+    "mocha": "^11.8.0",
+    "typescript": "^5.7.2"
+  }
+}

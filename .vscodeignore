@@ -1,0 +1,32 @@
+# Sources and build config: the published extension ships out/ and media/ only.
+src/**
+scripts/**
+**/tsconfig.json
+**/*.ts
+**/*.map
+
+# Tests and their fixtures
+test/**
+test-fixtures/**
+out/test/**
+.vscode-test
+.vscode-test/**
+.vscode-test.mjs
+
+# Screenshots are referenced from the Marketplace page over https, not bundled
+media/screenshots/**
+docs/**
+
+# Icon sources: `media/icon.png` is what ships, the rest is how it was made
+media/icon.svg
+media/icon-wheel.png
+icon-candidates/**
+
+# Repo tooling
+.vscode/**
+.github/**
+.gitignore
+.editorconfig
+PUBLISHING.md
+node_modules/**
+*.vsix
