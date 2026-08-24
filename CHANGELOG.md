@@ -1,73 +1,46 @@
 # Change Log
 
+## 1.1.3
+
+- No more em dashes anywhere you can read them.
+- Trimmed the readme, the changelog and the status bar position setting.
+
 ## 1.1.2
 
-- **A shorter description.** "Minimal color picker for the Peacock extension."
-  says what it is and what it needs in one line, which is all the extensions
-  list has room to show anyway.
+- Shorter description.
 
 ## 1.1.1
 
-- **The Marketplace description said the wrong things.** It called the status
-  bar item a "color wheel button", which stopped being true when the icon
-  became a palette, and described the menu as "floating", which it never
-  really was — it is a quick pick, the same dropdown the command palette
-  uses. The `showStatusBarButton` setting carried the same stale wording in
-  the Settings UI.
+- Fixed a stale description. It called the status bar item a "color wheel
+  button", which stopped being true when the icon became a palette, and called
+  the menu "floating", which it never was. It is a quick pick.
 
 ## 1.1.0
 
-- **A new icon.** The old one was a generic HSV wheel that said nothing about
-  what the extension is for or what it works with. The new one is the palette
-  from Microsoft's `symbol-color` codicon — the same glyph the extension
-  already puts in your status bar, so the Marketplace listing and the button
-  you click are the same shape — carrying Peacock's own five colors, sampled
-  from Peacock's icon. Four wells are filled; the fifth is the color you have
-  not picked yet.
-- **The color menu now shows the colors.** Every entry carries a swatch of the
-  color it names, with a contrast ring so a white swatch still reads on a light
-  theme and a near-black one on a dark theme.
-
-  The swatches were always being generated; they were being blocked. An
-  extension's storage directory is handed to it as a `vscode-userdata:` Uri, and
-  the workbench document's Content Security Policy allows images only from
-  `'self'`, `data:`, `blob:`, `vscode-remote-resource:` and `https:`. An icon
-  written there is fetched, refused, and drawn as an empty square, with nothing
-  reported to the extension. The swatches are now `data:` Uris built in memory,
-  which is on that list, needs no file on disk, and behaves the same over a
-  remote connection and in the browser.
-- **Random color and the picker have keyboard shortcuts**, shown beside them in
-  the menu: <kbd>⌃⌥⌘R</kbd> and <kbd>⌃⌥⌘P</kbd> on macOS,
-  <kbd>Ctrl+Shift+Alt+R</kbd> and <kbd>Ctrl+Shift+Alt+P</kbd> elsewhere. Peacock
-  has no shortcut for either, so these are new; the combinations were checked
-  against every key VS Code and its extensions already claim, and avoid
-  `Ctrl+Alt`, which is AltGr on many European layouts.
-- **Choosing a swatch in the palette now resets the lighten/darken slider** and
-  re-anchors it to that swatch. It used to leave the slider reading its old
-  offset against the previous color, so the next nudge jumped somewhere
-  unrelated and the swatch you had just chosen was lost.
-- **The swatch currently in use is ringed in the palette.** The ring was
-  written but the grid was never indexed, so it had never appeared.
-- **Browsing colors and then choosing an action no longer keeps the color you
-  were merely looking at.** Arrowing to Emerald and then picking Lighten
-  lightened Emerald rather than your own color, and Save to favorites saved it.
-  Only choosing a color keeps a color now. Opening the menu and dismissing it
-  without moving writes nothing at all.
-- **Holding a shortcut down changes the color once, not sixty times.** A held
-  key auto-repeats every 15–30ms and each repeat is a full command invocation,
-  which strobed the window and wrote to `settings.json` just as often. Repeats
-  are now collapsed: two deliberate presses are still two colors, but a hold of
-  any length is one.
-- **Saving and clearing moved to the top of the favorites section**, where they
-  sit beside the saved colors instead of trailing the whole menu, and they stay
-  in one place whether or not anything is saved.
-- **The palette grid is dense.** The swatches tile edge to edge, so every pixel
-  picks the color under it — the old gaps between them were dead space.
-- **Neutrals now climb to pure white in six equal steps** of perceived
-  lightness, rather than five uneven ones stopping at mid grey.
-- **The palette grid no longer zooms on hover.** Rings are drawn inside the
-  chip, so nothing changes size as the pointer crosses two hundred swatches, and
-  the color currently in use is marked with a ring of its own.
+- **New icon.** The palette from Microsoft's `symbol-color` codicon, the same
+  glyph the extension puts in your status bar, in Peacock's own five colors.
+  Four wells filled, the fifth left white.
+- **The color menu shows the colors.** Every entry carries a swatch, with a
+  contrast ring so white reads on a light theme and near-black on a dark one.
+  They were always generated but the workbench refused to load them: extension
+  storage is a `vscode-userdata:` Uri, which is not on the Content Security
+  Policy's `img-src` list. They are `data:` Uris now.
+- **Shortcuts for random color and the picker**, shown in the menu.
+  <kbd>⌃⌥⌘R</kbd> and <kbd>⌃⌥⌘P</kbd> on macOS, <kbd>Ctrl+Shift+Alt+R</kbd> and
+  <kbd>Ctrl+Shift+Alt+P</kbd> elsewhere. Checked against every key VS Code
+  already claims.
+- **Holding a shortcut changes the color once, not sixty times.** Repeats are
+  collapsed. Two deliberate presses are still two colors.
+- **Browsing colors then choosing an action no longer keeps the color you were
+  looking at.** Arrowing to Emerald and picking Lighten used to lighten
+  Emerald. Only choosing a color keeps a color.
+- **Choosing a swatch resets the lighten/darken slider** and re-anchors it.
+- **The swatch in use is ringed in the palette.** The ring existed but the grid
+  was never indexed, so it had never shown.
+- **The palette grid is dense.** Swatches tile edge to edge, so every pixel
+  picks the color under it. The old gaps were dead space.
+- **Save and clear head the favorites section** instead of trailing the menu.
+- **Neutrals climb to pure white** in six even steps of perceived lightness.
 
 ## 1.0.0
 
@@ -96,16 +69,16 @@ First release.
   there is a single pair of keys to learn and nothing new to collide with. The
   shortcut displayed is the one actually in effect: Peacock's declared default,
   reconciled against your `keybindings.json`, so a rebind or a removal shows
-  through. On Windows and Linux the entries show no shortcut, which is correct —
+  through. On Windows and Linux the entries show no shortcut, which is correct:
   Peacock's defaults use the Command key and so bind only on macOS.
 - **The picker gained a lighten/darken column** on the left: a vertical slider
   with buttons above and below, ten steps in each direction, and the same
   shortcut printed underneath. It is anchored to the color you last picked
   rather than compounding, so returning the slider to zero gives back exactly
   the color you chose.
-- The control uses Peacock's own arithmetic — HSL lightness moved by
-  `peacock.darkenLightenPercentage`, rounded per step the way a key press is —
-  and the test suite runs the real `peacock.lighten` and `peacock.darken`
+- The control uses Peacock's own arithmetic, HSL lightness moved by
+  `peacock.darkenLightenPercentage` and rounded per step the way a key press
+  is. The test suite runs the real `peacock.lighten` and `peacock.darken`
   commands and asserts the results agree, including over repeated presses.
 
 ## 0.4.0
@@ -118,8 +91,8 @@ First release.
   were Peacock's own recommended defaults, not anything you had chosen, and they
   had no business being the first thing in the list.
 - **The rainbow is 20 steps laid out in OKLCH.** HSV's "value" is not
-  brightness — a pure yellow and a pure blue at V=1 differ by about 5x in
-  perceived lightness — so an HSV sweep crowds some hues and stretches others.
+  brightness. A pure yellow and a pure blue at V=1 differ about 5x in perceived
+  lightness, so an HSV sweep crowds some hues and stretches others.
   OKLCH hue angles are perceptually spaced, so the 20 steps are evenly spaced to
   the eye. Each step sits at its hue's gamut cusp, the most vivid point sRGB can
   reach there.
@@ -186,7 +159,7 @@ All four are views onto one color, so switching tabs never changes it.
 - Webview scripts are inlined into the page rather than linked. VS Code serves
   webview resources through a caching service worker, and a locally reinstalled
   extension could otherwise end up running stale scripts against freshly loaded
-  extension code — which showed up as a completely blank wheel.
+  extension code, which showed up as a completely blank wheel.
 - The page reports script errors back to the extension, and the test suite
   asserts that the picker loads cleanly and reports no errors.
 - Removed `peacockColorPicker.livePreview` and `peacockColorPicker.viewColumn`;
