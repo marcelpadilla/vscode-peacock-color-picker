@@ -13,24 +13,11 @@ export interface MenuItem extends vscode.QuickPickItem {
   action?: MenuAction;
 }
 
-/** Description text with the shortcut, if there is one, set off to the right. */
-function withKey(text: string | undefined, key: string | undefined): string | undefined {
-  return [text, key].filter(Boolean).join('   ') || undefined;
-}
-
 /** The entries that open the menu, in the order they are reached. */
 function leadActions(keys: MenuKeys): MenuItem[] {
   return [
-    {
-      label: '$(sparkle) Random color',
-      description: withKey('Surprise me', keys.random),
-      action: 'random',
-    },
-    {
-      label: '$(color-mode) Open color picker',
-      description: withKey('Palette, HSV, RGB and OKLCH', keys.picker),
-      action: 'wheel',
-    },
+    { label: '$(sparkle) Random color', description: keys.random, action: 'random' },
+    { label: '$(color-mode) Open color picker', description: keys.picker, action: 'wheel' },
     // Lighten and darken are Peacock's own shortcuts. Showing its keys rather
     // than adding a competing pair means there is one set to learn.
     { label: '$(arrow-up) Lighten', description: keys.lighten, action: 'lighten' },
@@ -90,8 +77,10 @@ export function buildItems(options: {
   // than greeting you with a list Peacock seeded on your behalf.
   items.push(...leadActions(options.keys ?? {}));
 
+  // Only the marker for the colour in use. The name and the swatch already say
+  // which colour a row is, so the hex was repeating them on every line.
   const describe = (color: string) =>
-    color === options.currentColor ? `${color}  $(check)` : color;
+    color === options.currentColor ? '$(check)' : undefined;
 
   items.push({ label: 'Rainbow', kind: vscode.QuickPickItemKind.Separator });
   for (const entry of options.rainbow) {

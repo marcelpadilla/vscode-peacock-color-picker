@@ -65,17 +65,30 @@ suite('Color menu order', () => {
     assert.equal(items[3].description, undefined);
   });
 
-  test('random and the picker show their own shortcuts beside their descriptions', () => {
+  test('random and the picker show their own shortcuts', () => {
     const items = menu({ keys: { random: '⌃⌥⌘R', picker: '⌃⌥⌘P' } });
-    assert.ok(items[0].description?.includes('⌃⌥⌘R'), items[0].description);
-    assert.ok(items[0].description?.includes('Surprise me'), 'the description was replaced');
-    assert.ok(items[1].description?.includes('⌃⌥⌘P'), items[1].description);
+    assert.equal(items[0].description, '⌃⌥⌘R');
+    assert.equal(items[1].description, '⌃⌥⌘P');
   });
 
-  test('an unbound shortcut leaves the description alone rather than trailing a gap', () => {
+  test('an unbound shortcut leaves the entry with no description at all', () => {
     const items = menu({ keys: {} });
-    assert.equal(items[0].description, 'Surprise me');
-    assert.equal(items[1].description, 'Palette, HSV, RGB and OKLCH');
+    assert.equal(items[0].description, undefined);
+    assert.equal(items[1].description, undefined);
+  });
+
+  test('no entry repeats its color as a hex', () => {
+    // The name and the swatch say which color a row is; the hex said it a third
+    // time on every line. The only description a color entry carries now is the
+    // marker on the one in use.
+    const items = menu({ currentColor: '#42b883' });
+    const withHex = items.filter(item => /#[0-9a-f]{6}/i.test(item.description ?? ''));
+    assert.deepEqual(withHex, [], 'a hex is still being shown in a description');
+  });
+
+  test('typing a hex still offers it, since that is the value you typed', () => {
+    const items = menu({ filter: '#123456' });
+    assert.equal(items[0].label, 'Use #123456');
   });
 
   test('neither lead entry carries a color, so opening the menu previews nothing', () => {

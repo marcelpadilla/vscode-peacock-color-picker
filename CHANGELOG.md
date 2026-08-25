@@ -1,5 +1,13 @@
 # Change Log
 
+## 1.1.4
+
+- **A quieter color menu.** The rows no longer repeat their own hex: the name
+  and the swatch already say which color each one is. "Surprise me" and
+  "Palette, HSV, RGB and OKLCH" are gone too. Random color and the picker still
+  show their shortcuts, the color in use is still marked, and typing a hex
+  still offers it.
+
 ## 1.1.3
 
 - No more em dashes anywhere you can read them.
