@@ -2,7 +2,7 @@
   "name": "peacock-color-picker",
   "displayName": "Peacock Color Picker",
   "description": "Minimal color picker for the Peacock extension.",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "publisher": "marcelpadilla",
   "author": {
     "name": "Marcel Padilla",

@@ -1,5 +1,13 @@
 # Change Log
 
+## 1.1.5
+
+- **Peacock is a link now.** While it is missing, the status bar hover carries a
+  link straight to its Marketplace page, and the prompt offers "Open in
+  Marketplace" alongside "Show Peacock". The Extensions view searches whichever
+  registry your build points at, and the forks point at their own, so the web
+  page is the one route that resolves the same everywhere.
+
 ## 1.1.4
 
 - **A quieter color menu.** The rows no longer repeat their own hex: the name

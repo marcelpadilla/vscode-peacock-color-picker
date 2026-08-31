@@ -2,6 +2,8 @@ import * as vscode from 'vscode';
 
 /** Peacock's identifiers, as declared in johnpapa/vscode-peacock. */
 export const PEACOCK_EXTENSION_ID = 'johnpapa.vscode-peacock';
+/** Peacock's Marketplace page, built from the id so the two cannot drift. */
+export const PEACOCK_MARKETPLACE_URL = `https://marketplace.visualstudio.com/items?itemName=${PEACOCK_EXTENSION_ID}`;
 /** This extension's own id, as published. */
 export const EXTENSION_ID = 'marcelpadilla.peacock-color-picker';
 const PEACOCK_SECTION = 'peacock';

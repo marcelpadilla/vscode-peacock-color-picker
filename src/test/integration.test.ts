@@ -2,7 +2,7 @@ import * as assert from 'node:assert/strict';
 import * as vscode from 'vscode';
 import type { PickerApi } from '../extension';
 import math from '../color-math';
-import { getDarkenLightenPercentage } from '../peacock';
+import { getDarkenLightenPercentage, PEACOCK_MARKETPLACE_URL } from '../peacock';
 import type { PickerViewProvider } from '../picker-view';
 import { webviewLog } from '../picker-view';
 import { ApplyQueue } from '../apply-queue';
@@ -222,6 +222,17 @@ suite('Shipping correctness', () => {
     // nowhere, and nothing else would notice.
     const commands = await vscode.commands.getCommands(true);
     assert.ok(commands.includes('extension.open'), 'extension.open is gone');
+  });
+
+  test('the Peacock link points at Peacock', () => {
+    // The other half of that prompt, and the only half that works the same on
+    // every fork. A typo here would be invisible until someone without Peacock
+    // clicked it.
+    const url = new URL(PEACOCK_MARKETPLACE_URL);
+    assert.equal(url.protocol, 'https:');
+    assert.equal(url.host, 'marketplace.visualstudio.com');
+    assert.equal(url.pathname, '/items');
+    assert.equal(url.searchParams.get('itemName'), PEACOCK_ID);
   });
 
   test('we bind exactly the two keys Peacock has none for', () => {

@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { guardHeldKey } from './hold-guard';
 import { PickerViewProvider } from './picker-view';
-import { isPeacockInstalled, PEACOCK_EXTENSION_ID } from './peacock';
+import { isPeacockInstalled, PEACOCK_EXTENSION_ID, PEACOCK_MARKETPLACE_URL } from './peacock';
 import { readMenuKeys } from './peacock-keys';
 import { showColorMenu } from './quick-pick';
 import { SwatchCache } from './swatch';
@@ -100,13 +100,20 @@ async function ensurePeacock(): Promise<boolean> {
   }
 
   const show = 'Show Peacock';
+  const marketplace = 'Open in Marketplace';
   const choice = await vscode.window.showWarningMessage(
     'Peacock required. This extension picks colors for the Peacock extension, which is not installed.',
     show,
+    marketplace,
   );
   if (choice === show) {
     // Opens Peacock's page in the Extensions view, where Install sits.
     await vscode.commands.executeCommand('extension.open', PEACOCK_EXTENSION_ID);
+  } else if (choice === marketplace) {
+    // The Extensions view searches whichever registry the build is pointed at,
+    // and the forks point at their own. The web page is the one route that
+    // resolves the same everywhere.
+    await vscode.env.openExternal(vscode.Uri.parse(PEACOCK_MARKETPLACE_URL));
   }
   return false;
 }
@@ -137,9 +144,10 @@ function refreshStatusBarItem(context: vscode.ExtensionContext): void {
     item.tooltip = 'Pick a Peacock color';
     item.accessibilityInformation = { label: 'Pick a Peacock color', role: 'button' };
   } else {
-    // Say so on the button rather than waiting for a click to fail.
+    // Say so on the button rather than waiting for a click to fail, and put
+    // Peacock one click away in the hover itself.
     item.text = '$(symbol-color) $(warning)';
-    item.tooltip = 'Peacock required — click to open it in the Extensions view';
+    item.tooltip = peacockMissingTooltip();
     item.accessibilityInformation = { label: 'Peacock required', role: 'button' };
   }
 
@@ -147,4 +155,17 @@ function refreshStatusBarItem(context: vscode.ExtensionContext): void {
 
   statusBarItem = item;
   context.subscriptions.push(item);
+}
+
+/**
+ * The hover shown while Peacock is missing, carrying a link to it.
+ *
+ * A plain https link renders and opens from a Markdown tooltip as it is; only
+ * `command:` Uris require the string to be trusted, and this uses none, so the
+ * tooltip stays outside that trust boundary.
+ */
+function peacockMissingTooltip(): vscode.MarkdownString {
+  return new vscode.MarkdownString(
+    `Peacock required. [Get Peacock](${PEACOCK_MARKETPLACE_URL}).`,
+  );
 }
