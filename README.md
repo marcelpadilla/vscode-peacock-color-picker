@@ -28,4 +28,5 @@ Palette, HSV, RGB and OKLCH. Lighten and darken down the left.
 MIT · [Source](https://github.com/marcelpadilla/vscode-peacock-color-picker) · [Issues](https://github.com/marcelpadilla/vscode-peacock-color-picker/issues)
 
 Icon based on Microsoft's `symbol-color`
-[codicon](https://github.com/microsoft/vscode-codicons), CC BY 4.0.
+[codicon](https://github.com/microsoft/vscode-codicons), recolored,
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).

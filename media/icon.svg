@@ -3,7 +3,8 @@
      The palette is Microsoft's `symbol-color` codicon, which is also the
      glyph the extension shows in the status bar, so the Marketplace icon and
      the button you click are the same shape. Codicons are (c) Microsoft and
-     licensed CC BY 4.0. See https://github.com/microsoft/vscode-codicons
+     licensed CC BY 4.0, https://creativecommons.org/licenses/by/4.0/ , and the
+     glyph is used recolored. See https://github.com/microsoft/vscode-codicons
 
      The five wells carry Peacock's own palette, sampled from its icon:
      #1a79ca blue, #791aca purple, #ca1a79 magenta, #ffcc00 yellow,
